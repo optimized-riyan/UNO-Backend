@@ -1,6 +1,6 @@
 import express from 'express';
 import dotenv from 'dotenv';
-import { createLobby } from './lobby.js';
+import { Lobby } from './models/lobby.js';
 
 dotenv.config();
 const app = express();
@@ -18,7 +18,7 @@ app.post('/host', (req, res) => {
             }
         `);
     } else {
-        const roomId = createLobby();
+        const roomId = Lobby.createLobby();
         res.status(200).json({roomId});
     }
 });
