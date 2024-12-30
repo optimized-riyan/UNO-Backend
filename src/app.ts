@@ -1,19 +1,25 @@
 import express from 'express';
 import dotenv from 'dotenv';
-import {WebSocketServer} from 'ws';
-import bodyParser from 'body-parser';
+import { createLobby } from './lobby.js';
 
 dotenv.config();
 const app = express();
 
-app.use(bodyParser.json());
+app.use(express.json());
 
 app.post('/host', (req, res) => {
     const {hostname, playerCount} = req.body;
     if (!hostname || !playerCount) {
-        res.writeHead(422);
+        res.status(422).end(`
+            please provide:
+            {
+                hostname: string,
+                playerCount: integer
+            }
+        `);
     } else {
-        res.writeHead(204);
+        const roomId = createLobby();
+        res.status(200).json({roomId});
     }
 });
 
