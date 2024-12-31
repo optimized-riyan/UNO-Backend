@@ -32,6 +32,10 @@ export class Lobby {
     public addPlayer(player: Player): void {
         this.players.push(player);
     }
+
+    public getPlayerById(playerId: string): Player {
+        return this.players.find((player => {player.playerId === playerId})) as Player;
+    }
 }
 
 export enum LobbyState {

@@ -44,7 +44,7 @@ app.post('/join', (req, res) => {
     } else if (lobby.players.length === lobby.maxPlayers) {
         res.status(403).end('lobby is full');
     } else {
-        const player = new Player;
+        const player = new Player(lobby);
         lobby.addPlayer(player);
         res.cookie('playerId', player.playerId).status(204).end();
     }
