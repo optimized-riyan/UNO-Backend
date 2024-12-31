@@ -18,21 +18,28 @@ export default function(socket: WebSocket, req: IncomingMessage): void {
 
     socket.onmessage = (message: MessageEvent): void => {
         if (lobby.lobbyState !== LobbyState.Running) {
-            sendInvalidActionMessage();
+            sendInvalidActionMessage('game not yet running');
             return;
         }
 
         const clientMessage = message.data as ClientMessage;
         switch (clientMessage.type) {
             case ClientMessageType.ChosenCard:
-                if (lobby.nextPlayer !== player) {
-                    sendInvalidActionMessage();
-                } else if (lobby.players) {
-
+                const cardIndex = (clientMessage.data as ChosenCard).cardIndex;
+                if (!cardIndex) {
+                    sendInvalidActionMessage('card index not provided');
+                } else if (lobby.nextPlayer !== player) {
+                    sendInvalidActionMessage('it is not your turn yet');
+                } else if (cardIndex >= player.cards.length) {
+                    sendInvalidActionMessage('card index out of range');
+                } else if (!lobby.checkIsCardValid(player.cards[cardIndex] as Card)) {
+                    sendInvalidActionMessage('invalid move');
+                } else {
+                    lobby.pushToStack(player, cardIndex);
                 }
                 break;
             default:
-                sendInvalidActionMessage();
+                sendInvalidActionMessage('unknown action');
                 break;
         }
     };
@@ -41,18 +48,18 @@ export default function(socket: WebSocket, req: IncomingMessage): void {
         socket.send(JSON.stringify(serverMessage));
     }
 
-    function sendInvalidActionMessage() {
+    function sendInvalidActionMessage(message?: string) {
         sendServerMessage({
-            type: ServerMessageType.InvalidAction
+            type: ServerMessageType.InvalidAction,
+            data: message,
         });
     }
 }
 
 
-
 interface ServerMessage {
     type: ServerMessageType,
-    data?: PlayersUpdate | StackUpdate,
+    data?: string | PlayersUpdate | StackUpdate,
 }
 
 enum ServerMessageType {
@@ -76,7 +83,7 @@ interface StackUpdate {
 
 interface ClientMessage {
     type: ClientMessageType,
-    data?: ChosenCard,
+    data: ChosenCard,
 }
 
 enum ClientMessageType {

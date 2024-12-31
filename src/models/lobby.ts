@@ -1,5 +1,6 @@
 import randomstring from 'randomstring';
 import { Player } from './player.js';
+import { Card } from './card.js';
 
 export class Lobby {
     public lobbyId: string;
@@ -9,6 +10,7 @@ export class Lobby {
     public lobbyState: LobbyState;
     public pickupCount: number;
     public isReversed: boolean;
+    public stack: Card[];
 
     public static lobbies: Map<string, Lobby> = new Map;
 
@@ -19,6 +21,7 @@ export class Lobby {
         this.pickupCount = 0;
         this.isReversed = false;
         this.maxPlayers = maxPlayers;
+        this.stack = [];
     }
 
     public static createLobby(): string {
@@ -33,8 +36,12 @@ export class Lobby {
         this.players.push(player);
     }
 
-    public getPlayerById(playerId: string): Player {
-        return this.players.find((player => {player.playerId === playerId})) as Player;
+    public checkIsCardValid(card: Card): boolean {
+        return true; // TODO: implement card validation
+    }
+
+    public pushToStack(player: Player, cardIndex: number) {
+
     }
 }
 
