@@ -1,6 +1,5 @@
 import {IncomingMessage} from 'http';
 import { Player } from './models/player.js';
-import { LobbyState } from './models/lobby.js';
 import { Card } from './models/card.js';
 
 export default function(socket: WebSocket, req: IncomingMessage): void {
@@ -17,79 +16,48 @@ export default function(socket: WebSocket, req: IncomingMessage): void {
     const lobby = player.lobby;
 
     socket.onmessage = (message: MessageEvent): void => {
-        if (lobby.lobbyState !== LobbyState.Running) {
-            sendInvalidActionMessage('game not yet running');
-            return;
-        }
-
-        const clientMessage = message.data as ClientMessage;
-        switch (clientMessage.type) {
-            case ClientMessageType.ChosenCard:
-                const cardIndex = (clientMessage.data as ChosenCard).cardIndex;
-                if (!cardIndex) {
-                    sendInvalidActionMessage('card index not provided');
-                } else if (lobby.nextPlayer !== player) {
-                    sendInvalidActionMessage('it is not your turn yet');
-                } else if (cardIndex >= player.cards.length) {
-                    sendInvalidActionMessage('card index out of range');
-                } else if (!lobby.checkIsCardValid(player.cards[cardIndex] as Card)) {
-                    sendInvalidActionMessage('invalid move');
-                } else {
-                    lobby.pushToStack(player, cardIndex);
-                }
-                break;
-            default:
-                sendInvalidActionMessage('unknown action');
-                break;
-        }
+        lobby.gameLoop(message, player, sendServerMessage);
     };
 
     function sendServerMessage(serverMessage: ServerMessage): void {
         socket.send(JSON.stringify(serverMessage));
     }
-
-    function sendInvalidActionMessage(message?: string) {
-        sendServerMessage({
-            type: ServerMessageType.InvalidAction,
-            data: message,
-        });
-    }
 }
 
 
-interface ServerMessage {
+export interface ServerMessage {
     type: ServerMessageType,
     data?: string | PlayersUpdate | StackUpdate,
 }
 
-enum ServerMessageType {
+export enum ServerMessageType {
     InvalidAction,
     PlayersUpdate,
     StackUpdate,
 }
 
-interface PlayersUpdate {
+export interface PlayersUpdate {
     updates: PlayerUpdate[],
 }
 
-interface PlayerUpdate {
+export interface PlayerUpdate {
     playerIndex: number,
     cardCount: number,
 }
 
-interface StackUpdate {
+export interface StackUpdate {
     topCard: Card,
 }
 
-interface ClientMessage {
+export interface ClientMessage {
     type: ClientMessageType,
     data: ChosenCard,
 }
 
-enum ClientMessageType {
+export enum ClientMessageType {
     ChosenCard,
 }
 
-interface ChosenCard {
+export interface ChosenCard {
     cardIndex: number,
 }

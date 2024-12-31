@@ -1,6 +1,7 @@
 import randomstring from 'randomstring';
 import { Player } from './player.js';
 import { Card } from './card.js';
+import { ChosenCard, ClientMessage, ClientMessageType, ServerMessage, ServerMessageType } from '../websocket.js';
 
 export class Lobby {
     public lobbyId: string;
@@ -31,6 +32,41 @@ export class Lobby {
     }
 
     private static roomIdGen = (): string => randomstring.generate({length: 6, charset: ['numeric']});
+
+    public gameLoop(message: MessageEvent, player: Player, sendServerMessage: (message: ServerMessage) => void) {
+        if (this.lobbyState !== LobbyState.Running) {
+            sendInvalidActionMessage('game not yet running');
+            return;
+        }
+
+        const clientMessage = message.data as ClientMessage;
+        switch (clientMessage.type) {
+            case ClientMessageType.ChosenCard:
+                const cardIndex = (clientMessage.data as ChosenCard).cardIndex;
+                if (!cardIndex) {
+                    sendInvalidActionMessage('card index not provided');
+                } else if (this.nextPlayer !== player) {
+                    sendInvalidActionMessage('it is not your turn yet');
+                } else if (cardIndex >= player.cards.length) {
+                    sendInvalidActionMessage('card index out of range');
+                } else if (!this.checkIsCardValid(player.cards[cardIndex] as Card)) {
+                    sendInvalidActionMessage('invalid move');
+                } else {
+                    this.pushToStack(player, cardIndex);
+                }
+                break;
+            default:
+                sendInvalidActionMessage('unknown action');
+                break;
+        }
+
+        function sendInvalidActionMessage(message?: string): void {
+            sendServerMessage({
+                type: ServerMessageType.InvalidAction,
+                data: message,
+            });
+        }
+    }
 
     public addPlayer(player: Player): void {
         this.players.push(player);
