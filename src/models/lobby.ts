@@ -21,8 +21,10 @@ export class Lobby {
         this.maxPlayers = maxPlayers;
     }
 
-    public static createLobby(): Lobby {
-        return new Lobby(Lobby.roomIdGen(), []);
+    public static createLobby(): string {
+        const lobby = new Lobby(Lobby.roomIdGen(), []);
+        Lobby.lobbies.set(lobby.lobbyId, lobby);
+        return lobby.lobbyId;
     }
 
     private static roomIdGen = (): string => randomstring.generate({length: 6, charset: ['numeric']});

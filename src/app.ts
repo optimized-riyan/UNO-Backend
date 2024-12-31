@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import { Lobby } from './models/lobby.js';
 import { Player } from './models/player.js';
 import { WebSocketServer } from 'ws';
+import websocketHandler from './websocket.js';
 
 dotenv.config();
 const app = express();
@@ -20,8 +21,8 @@ app.post('/host', (req, res) => {
             }
         `);
     } else {
-        const roomId = Lobby.createLobby();
-        res.status(200).json({roomId});
+        const lobbyId = Lobby.createLobby();
+        res.status(200).json({lobbyId});
     }
 });
 
@@ -32,7 +33,7 @@ app.post('/join', (req, res) => {
             please provide:
             {
                 lobbyId: string,
-                }    
+            }    
         `);
         return;
     }
@@ -53,7 +54,5 @@ app.listen(process.env.PORT, function() {
     console.log(`Server started on http://localhost:${process.env.PORT}`);
 });
 
-const server = new WebSocketServer;
-server.on('connection', (socket, req) => {
-    
-});
+const server = new WebSocketServer({port: parseInt(process.env.WSS_PORT ?? '5174')});
+server.on('connection', websocketHandler);
