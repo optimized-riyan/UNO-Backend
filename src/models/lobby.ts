@@ -32,9 +32,9 @@ export class Lobby {
 
     private static roomIdGen = (): string => randomstring.generate({length: 6, charset: ['numeric']});
 
-    public gameLoop(message: MessageEvent, player: Player, sendServerMessage: (message: ServerMessage) => void) {
+    public gameLoop(message: MessageEvent, player: Player) {
         if (this.lobbyState !== LobbyState.Running) {
-            sendInvalidActionMessage('game not yet running');
+            player.sendInvalidActionMessage('game not yet running');
             return;
         }
 
@@ -43,28 +43,21 @@ export class Lobby {
             case ClientMessageType.ChosenCard:
                 const cardIndex = (clientMessage.data as ChosenCard).cardIndex;
                 if (!cardIndex) {
-                    sendInvalidActionMessage('card index not provided');
+                    player.sendInvalidActionMessage('card index not provided');
                 } else if (this.players[this.currentPlayerIndex] as Player !== player) {
-                    sendInvalidActionMessage('it is not your turn yet');
+                    player.sendInvalidActionMessage('it is not your turn yet');
                 } else if (cardIndex >= player.cards.length) {
-                    sendInvalidActionMessage('card index out of range');
+                    player.sendInvalidActionMessage('card index out of range');
                 } else if (!this.checkIsCardValid(player.cards[cardIndex] as Card)) {
-                    sendInvalidActionMessage('invalid move');
+                    player.sendInvalidActionMessage('invalid move');
                 } else {
                     this.pushToStack(player, cardIndex);
                     this.chooseNextPlayer();
                 }
                 break;
             default:
-                sendInvalidActionMessage('unknown action');
+                player.sendInvalidActionMessage('unknown action');
                 break;
-        }
-
-        function sendInvalidActionMessage(message?: string): void {
-            sendServerMessage({
-                type: ServerMessageType.InvalidAction,
-                data: message,
-            });
         }
     }
 

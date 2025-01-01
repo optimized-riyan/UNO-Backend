@@ -13,15 +13,12 @@ export default function(socket: WebSocket, req: IncomingMessage): void {
         socket.close();
         return;
     }
+    player.socket = socket;
     const lobby = player.lobby;
 
     socket.onmessage = (message: MessageEvent): void => {
-        lobby.gameLoop(message, player, sendServerMessage);
+        lobby.gameLoop(message, player);
     };
-
-    function sendServerMessage(serverMessage: ServerMessage): void {
-        socket.send(JSON.stringify(serverMessage));
-    }
 }
 
 
