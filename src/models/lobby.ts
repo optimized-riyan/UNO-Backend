@@ -96,20 +96,38 @@ export class Lobby {
     }
 
     public chooseNextPlayer(): void {
+        const rememberCurrPlayer = this.currentPlayerIndex;
         if (this.pickupCount > 0) {
-            const nextPlayer = this.nextPlayer(this.currentPlayerIndex);
+            const nextPlayerIndex = this.getNextPlayerIndex(this.currentPlayerIndex);
+            const nextPlayer = this.players[nextPlayerIndex] as Player;
             if (!nextPlayer.checkPlayerHasCardWithValue(CardValue.PlusTwo) && !nextPlayer.checkPlayerHasCardWithValue(CardValue.PlusFour)) {
-                
+                this.giveCards(this.pickupCount, nextPlayer);
+                this.pickupCount = 0;
             }
+            this.currentPlayerIndex = this.getNextPlayerIndex(nextPlayerIndex);
+        } else if (this.isSkipNext) {
+            this.currentPlayerIndex = this.getNextPlayerIndex(this.getNextPlayerIndex(this.currentPlayerIndex));
         }
     }
 
-    private nextPlayer(currIndex: number): Player {
-        let nextIndex = (currIndex + 1) % this.maxPlayers;
+    private getNextPlayerIndex(currIndex: number): number {
+        let nextIndex = (currIndex + (this.isReversed ? -1 : 1) + this.maxPlayers) % this.maxPlayers;
         let counter = 0;
-        while ((this.players[nextIndex] as Player).cards.length === 0 && counter < this.maxPlayers) nextIndex++;
+        while ((this.players[nextIndex] as Player).cards.length === 0 && counter < this.maxPlayers) {
+            nextIndex = (nextIndex + (this.isReversed ? -1 : 1) + this.maxPlayers) % this.maxPlayers;
+            counter++;
+        }
         if (counter === this.maxPlayers) throw 'invalid server state';
-        return this.players[nextIndex] as Player;
+        return nextIndex;
+    }
+
+    private giveCards(count: number, player: Player): void {
+        const poppedCards = [];
+        for (let i = 0; i < count; i++) {
+            poppedCards.push(this.deck.pop() as Card);
+        }
+        const length = poppedCards.length;
+        for (let i = 0; i < length; i++) player.cards.push(poppedCards[i] as Card);
     }
 }
 
