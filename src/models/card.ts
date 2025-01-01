@@ -28,6 +28,7 @@ export enum CardValue {
     Eight,
     Nine,
     PlusTwo,
+    PlusFour,
     Skip,
     Reverse
 }

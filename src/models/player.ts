@@ -1,4 +1,4 @@
-import { Card } from "./card.js";
+import { Card, CardColor, CardValue } from "./card.js";
 import randomstring from 'randomstring';
 import { Lobby } from "./lobby.js";
 
@@ -15,5 +15,17 @@ export class Player {
 
     private static playerIdGen(): string {
         return randomstring.generate();
+    }
+
+    public checkPlayerHasCardWithColor(color: CardColor): boolean {
+        return this.cards.some(card => card.color === color);
+    }
+    
+    public checkPlayerHasCardWithValue(value: CardValue): boolean {
+        return this.cards.some(card => card.value === value);
+    }
+    
+    public checkPlayerHasCard(card: Card): boolean {
+        return this.cards.includes(card);
     }
 }

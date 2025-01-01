@@ -1,28 +1,25 @@
 import randomstring from 'randomstring';
 import { Player } from './player.js';
-import { Card } from './card.js';
+import { Card, CardColor, CardValue } from './card.js';
 import { ChosenCard, ClientMessage, ClientMessageType, ServerMessage, ServerMessageType } from '../websocket.js';
 
 export class Lobby {
     public lobbyId: string;
     public players: Player[];
     public maxPlayers: number;
-    public nextPlayer?: Player;
-    public lobbyState: LobbyState;
-    public pickupCount: number;
-    public isReversed: boolean;
-    public stack: Card[];
+    public currentPlayerIndex: number = 0;
+    public lobbyState: LobbyState = LobbyState.WaitingForPlayers;
+    public pickupCount: number = 0;
+    public isReversed: boolean = false;
+    public isSkipNext: boolean = false;
+    public stack: Card[] = [];
 
     public static lobbies: Map<string, Lobby> = new Map;
 
     constructor(lobbyId: string, players: Player[], maxPlayers: number = 2) {
         this.lobbyId = lobbyId;
         this.players = players;
-        this.lobbyState = LobbyState.WaitingForPlayers;
-        this.pickupCount = 0;
-        this.isReversed = false;
         this.maxPlayers = maxPlayers;
-        this.stack = [];
     }
 
     public static createLobby(): string {
@@ -45,7 +42,7 @@ export class Lobby {
                 const cardIndex = (clientMessage.data as ChosenCard).cardIndex;
                 if (!cardIndex) {
                     sendInvalidActionMessage('card index not provided');
-                } else if (this.nextPlayer !== player) {
+                } else if (this.players[this.currentPlayerIndex] as Player !== player) {
                     sendInvalidActionMessage('it is not your turn yet');
                 } else if (cardIndex >= player.cards.length) {
                     sendInvalidActionMessage('card index out of range');
@@ -53,6 +50,7 @@ export class Lobby {
                     sendInvalidActionMessage('invalid move');
                 } else {
                     this.pushToStack(player, cardIndex);
+                    this.chooseNextPlayer();
                 }
                 break;
             default:
@@ -77,7 +75,39 @@ export class Lobby {
     }
 
     public pushToStack(player: Player, cardIndex: number) {
+        switch ((player.cards[cardIndex] as Card).value) {
+            case (CardValue.PlusTwo):
+                this.pickupCount += 2;
+                break;
+            case (CardValue.PlusFour):
+                this.pickupCount += 4;
+                break;
+            case (CardValue.Reverse):
+                this.isReversed = !this.isReversed;
+                break;
+            case (CardValue.Skip):
+                this.isSkipNext = true;
+                break;
+            default:
+                throw Error('invalid card');
+        }
+    }
 
+    public chooseNextPlayer(): void {
+        if (this.pickupCount > 0) {
+            const nextPlayer = this.nextPlayer(this.currentPlayerIndex);
+            if (!nextPlayer.checkPlayerHasCardWithValue(CardValue.PlusTwo) && !nextPlayer.checkPlayerHasCardWithValue(CardValue.PlusFour)) {
+
+            }
+        }
+    }
+
+    private nextPlayer(currIndex: number): Player {
+        let nextIndex = (currIndex + 1) % this.maxPlayers;
+        let counter = 0;
+        while ((this.players[nextIndex] as Player).cards.length === 0 && counter < this.maxPlayers) nextIndex++;
+        if (counter === this.maxPlayers) throw 'invalid server state';
+        return this.players[nextIndex] as Player;
     }
 }
 
