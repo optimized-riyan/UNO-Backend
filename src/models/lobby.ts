@@ -13,13 +13,15 @@ export class Lobby {
     public isReversed: boolean = false;
     public isSkipNext: boolean = false;
     public stack: Card[] = [];
+    public deck: Card[];
 
     public static lobbies: Map<string, Lobby> = new Map;
 
-    constructor(lobbyId: string, players: Player[], maxPlayers: number = 2) {
+    constructor(lobbyId: string, players: Player[], maxPlayers: number = 2, deckCount: number = 2) {
         this.lobbyId = lobbyId;
         this.players = players;
         this.maxPlayers = maxPlayers;
+        this.deck = Card.deckFactory(deckCount);
     }
 
     public static createLobby(): string {
@@ -97,7 +99,7 @@ export class Lobby {
         if (this.pickupCount > 0) {
             const nextPlayer = this.nextPlayer(this.currentPlayerIndex);
             if (!nextPlayer.checkPlayerHasCardWithValue(CardValue.PlusTwo) && !nextPlayer.checkPlayerHasCardWithValue(CardValue.PlusFour)) {
-
+                
             }
         }
     }
