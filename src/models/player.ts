@@ -6,13 +6,16 @@ import { Card } from './card.js';
 export class Player {
     public cards: Card[] = [];
     public playerId: string;
+    public index?: number;
+    public name: string;
     public lobby: Lobby;
     public socket?: WebSocket;
     public static players: Map<string, Player> = new Map;
 
-    constructor(lobby: Lobby) {
+    constructor(lobby: Lobby, name: string) {
         this.playerId = Player.playerIdGen();
         this.lobby = lobby;
+        this.name = name;
     }
 
     private static playerIdGen(): string {

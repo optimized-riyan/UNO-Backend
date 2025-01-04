@@ -13,10 +13,10 @@
             "state": {
               "type": "excalidraw",
               "state": {
-                "file": "Excalidraw/GameLoop.md"
+                "file": "Excalidraw/Player Connection.md"
               },
               "icon": "excalidraw-icon",
-              "title": "GameLoop"
+              "title": "Player Connection"
             }
           },
           {
@@ -59,8 +59,7 @@
               "title": "Server Events"
             }
           }
-        ],
-        "currentTab": 3
+        ]
       }
     ],
     "direction": "vertical"
@@ -203,13 +202,13 @@
       "obsidian-excalidraw-plugin:Create new drawing": false
     }
   },
-  "active": "b74363463986698f",
+  "active": "e38bd294f85165fb",
   "lastOpenFiles": [
-    "Client Actions.md",
-    "Excalidraw/SubmitCard Subroutine.md",
-    "Client State.md",
     "Excalidraw/GameLoop.md",
+    "Excalidraw/SubmitCard Subroutine.md",
     "Server Events.md",
+    "Client Actions.md",
+    "Client State.md",
     "Excalidraw/Player Connection.md",
     "Excalidraw/Lobby Management Subroutine.md",
     "Types/Card.md",

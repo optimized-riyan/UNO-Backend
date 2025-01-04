@@ -1,7 +1,6 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import { WebSocketServer } from 'ws';
-import websocketHandler from './websocket.js';
 import { Lobby } from './models/lobby.js';
 import { Player } from './models/player.js';
 
@@ -27,13 +26,14 @@ app.post('/host', (req, res) => {
 });
 
 app.post('/join', (req, res) => {
-    const {lobbyId} = req.body;
-    if (!lobbyId) {
+    const {lobbyId, name} = req.body;
+    if (!lobbyId || !name) {
         res.status(422).end(`
             please provide:
             {
                 lobbyId: string,
-            }    
+                name: string
+            }
         `);
         return;
     }
@@ -44,7 +44,7 @@ app.post('/join', (req, res) => {
     } else if (lobby.players.length === lobby.maxPlayers) {
         res.status(403).end('lobby is full');
     } else {
-        const player = new Player(lobby);
+        const player = new Player(lobby, name);
         lobby.addPlayer(player);
         res.cookie('playerId', player.playerId).status(204).end();
     }
@@ -55,4 +55,4 @@ app.listen(process.env.PORT, function() {
 });
 
 const server = new WebSocketServer({port: parseInt(process.env.WSS_PORT ?? '5174')});
-server.on('connection', websocketHandler);
+server.on('connection', Lobby.playerConnectionHandler);
