@@ -9,9 +9,10 @@
 9. CardValidity
 10. PlayerOut
 11. PlayerSkipped
-12. GameEnded
-13. CardSubmissionRequired
-14. ColorChoiceRequired
+12. GameStarted
+13. GameEnded
+14. CardSubmissionRequired
+15. ColorChoiceRequired
 
 ## State Initialize Events
 
@@ -103,6 +104,11 @@ PlayerOut {
 PlayerSkipped {
 	playerIndex: number
 }
+```
+
+### GameStarted
+```
+GameStarted {}
 ```
 
 ### GameEnded

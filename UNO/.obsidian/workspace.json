@@ -13,10 +13,10 @@
             "state": {
               "type": "excalidraw",
               "state": {
-                "file": "Excalidraw/Player Connection.md"
+                "file": "Excalidraw/GameLoop.md"
               },
               "icon": "excalidraw-icon",
-              "title": "Player Connection"
+              "title": "GameLoop"
             }
           },
           {
@@ -40,7 +40,7 @@
               "type": "markdown",
               "state": {
                 "file": "Server Events.md",
-                "mode": "source",
+                "mode": "preview",
                 "source": false
               },
               "icon": "lucide-file",
@@ -192,9 +192,10 @@
   },
   "active": "e38bd294f85165fb",
   "lastOpenFiles": [
+    "Excalidraw/SubmitCard Subroutine.md",
+    "Excalidraw/Player Connection.md",
     "Client State.md",
     "Server Events.md",
-    "Excalidraw/Player Connection.md",
     "Excalidraw/Lobby Management Subroutine.md",
     "Types/Card.md",
     "Types/CardColor.md",
@@ -202,7 +203,6 @@
     "Types",
     "Client Actions.md",
     "Excalidraw/HitDeck Subroutine.md",
-    "Excalidraw/SubmitCard Subroutine.md",
     "Excalidraw/PickColor Subroutine.md",
     "Excalidraw/GameLoop.md",
     "Excalidraw/Choose Next Player Subroutine.md",
