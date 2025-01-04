@@ -8,15 +8,15 @@
         "type": "tabs",
         "children": [
           {
-            "id": "a148175adbe2cbf9",
+            "id": "bdc48f33ca8fd77d",
             "type": "leaf",
             "state": {
               "type": "excalidraw",
               "state": {
-                "file": "Excalidraw/Choose Next Player Subroutine.md"
+                "file": "Excalidraw/GameLoop.md"
               },
               "icon": "excalidraw-icon",
-              "title": "Choose Next Player Subroutine"
+              "title": "GameLoop"
             }
           },
           {
@@ -176,15 +176,16 @@
       "obsidian-excalidraw-plugin:Create new drawing": false
     }
   },
-  "active": "a148175adbe2cbf9",
+  "active": "bdc48f33ca8fd77d",
   "lastOpenFiles": [
     "Server Events.md",
-    "Excalidraw/Choose Next Player Subroutine.md",
-    "Excalidraw/SubmitCard Subroutine.md",
     "Excalidraw/GameLoop.md",
-    "Excalidraw/ExcalidrawStartup.md",
-    "Excalidraw/PickColor Subroutine.md",
+    "Excalidraw/Lobby Management Subroutine.md",
     "Excalidraw/HitDeck Subroutine.md",
+    "Excalidraw/SubmitCard Subroutine.md",
+    "Excalidraw/PickColor Subroutine.md",
+    "Excalidraw/Choose Next Player Subroutine.md",
+    "Excalidraw/ExcalidrawStartup.md",
     "Client Actions.md",
     "Excalidraw",
     "Excalidraw",
