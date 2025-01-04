@@ -1,4 +1,4 @@
-export class Card {
+class Card {
     public color: CardColor;
     public value: CardValue;
 
@@ -85,48 +85,27 @@ export class Card {
             new Card(CardColor.Black, CardValue.PlusFour),
             new Card(CardColor.Black, CardValue.PlusFour),
             new Card(CardColor.Black, CardValue.PlusFour),
+            new Card(CardColor.Black, CardValue.ColorChange),
+            new Card(CardColor.Black, CardValue.ColorChange),
+            new Card(CardColor.Black, CardValue.ColorChange),
+            new Card(CardColor.Black, CardValue.ColorChange),
         ];
-        shuffle(deck);
+        this.shuffle(deck);
 
         return deck;
+    }
 
-        function shuffle<T>(array: T[]): void {
-            for (let i = 0; i < array.length; i++) {
-                const swapIndex = randomInt(i, array.length);
-                if (swapIndex === i || swapIndex === array.length) continue;
-                const temp = array[swapIndex] as T;
-                array[swapIndex] = array[i] as T;
-                array[i] = temp;
-            }
+    private static shuffle<T>(array: T[]): void {
+        for (let i = 0; i < array.length; i++) {
+            const swapIndex = randomInt(i, array.length);
+            if (swapIndex === i || swapIndex === array.length) continue;
+            const temp = array[swapIndex] as T;
+            array[swapIndex] = array[i] as T;
+            array[i] = temp;
+        }
 
-            function randomInt(start: number, end: number) {
-                return Math.floor(Math.random() * (end - start)) + start;
-            }
+        function randomInt(start: number, end: number) {
+            return Math.floor(Math.random() * (end - start)) + start;
         }
     }
-}
-
-export enum CardColor {
-    Red,
-    Green,
-    Blue,
-    Yellow,
-    Black
-}
-
-export enum CardValue {
-    Zero,
-    One,
-    Two,
-    Three,
-    Four,
-    Five,
-    Six,
-    Seven,
-    Eight,
-    Nine,
-    PlusTwo,
-    PlusFour,
-    Skip,
-    Reverse
 }

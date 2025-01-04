@@ -1,6 +1,5 @@
 import {IncomingMessage} from 'http';
 import { Player } from './models/player.js';
-import { Card } from './models/card.js';
 
 export default function(socket: WebSocket, req: IncomingMessage): void {
     const playerId: string | undefined = (new URLSearchParams(req.headers.cookie ?? '') as any).playerId;
@@ -19,42 +18,4 @@ export default function(socket: WebSocket, req: IncomingMessage): void {
     socket.onmessage = (message: MessageEvent): void => {
         lobby.gameLoop(message, player);
     };
-}
-
-
-export interface ServerMessage {
-    type: ServerMessageType,
-    data?: string | PlayersUpdate | StackUpdate,
-}
-
-export enum ServerMessageType {
-    InvalidAction,
-    PlayersUpdate,
-    StackUpdate,
-}
-
-export interface PlayersUpdate {
-    updates: PlayerUpdate[],
-}
-
-export interface PlayerUpdate {
-    playerIndex: number,
-    cardCount: number,
-}
-
-export interface StackUpdate {
-    topCard: Card,
-}
-
-export interface ClientMessage {
-    type: ClientMessageType,
-    data: ChosenCard,
-}
-
-export enum ClientMessageType {
-    ChosenCard,
-}
-
-export interface ChosenCard {
-    cardIndex: number,
 }

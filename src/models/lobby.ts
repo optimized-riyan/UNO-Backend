@@ -1,7 +1,5 @@
 import randomstring from 'randomstring';
 import { Player } from './player.js';
-import { Card, CardColor, CardValue } from './card.js';
-import { ChosenCard, ClientMessage, ClientMessageType, ServerMessage, ServerMessageType } from '../websocket.js';
 
 export class Lobby {
     public lobbyId: string;
@@ -13,6 +11,7 @@ export class Lobby {
     public isReversed: boolean = false;
     public isSkipNext: boolean = false;
     public stack: Card[] = [];
+    public stackTop?: Card;
     public deck: Card[];
 
     public static lobbies: Map<string, Lobby> = new Map;
@@ -33,32 +32,6 @@ export class Lobby {
     private static roomIdGen = (): string => randomstring.generate({length: 6, charset: ['numeric']});
 
     public gameLoop(message: MessageEvent, player: Player) {
-        if (this.lobbyState !== LobbyState.Running) {
-            player.sendInvalidActionMessage('game not yet running');
-            return;
-        }
-
-        const clientMessage = message.data as ClientMessage;
-        switch (clientMessage.type) {
-            case ClientMessageType.ChosenCard:
-                const cardIndex = (clientMessage.data as ChosenCard).cardIndex;
-                if (!cardIndex) {
-                    player.sendInvalidActionMessage('card index not provided');
-                } else if (this.players[this.currentPlayerIndex] as Player !== player) {
-                    player.sendInvalidActionMessage('it is not your turn yet');
-                } else if (cardIndex >= player.cards.length) {
-                    player.sendInvalidActionMessage('card index out of range');
-                } else if (!this.checkIsCardValid(player.cards[cardIndex] as Card)) {
-                    player.sendInvalidActionMessage('invalid move');
-                } else {
-                    this.pushToStack(player, cardIndex);
-                    this.chooseNextPlayer();
-                }
-                break;
-            default:
-                player.sendInvalidActionMessage('unknown action');
-                break;
-        }
     }
 
     public addPlayer(player: Player): void {
@@ -122,11 +95,4 @@ export class Lobby {
         const length = poppedCards.length;
         for (let i = 0; i < length; i++) player.cards.push(poppedCards[i] as Card);
     }
-}
-
-export enum LobbyState {
-    WaitingForPlayers,
-    Running,
-    Ended,
-    AllPlayersLeft
 }

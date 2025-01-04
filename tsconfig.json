@@ -14,5 +14,5 @@
         "lib": ["ES2015", "ES2022"],
         "outDir": "dist"
     },
-    "include": ["src/**/*"]
+    "include": ["src/**/*", "index.d.ts"]
 }
