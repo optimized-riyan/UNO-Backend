@@ -1,15 +1,36 @@
-1. CardsUpdate
-2. StackTopUpdate
-3. CardCountUpdate
-4. DirectionUpdate
-5. PlayerTurnUpdate
-6. StackColorUpdate
-7. CardValidity
-8. PlayerOut
-9. PlayerSkipped
-10. CardChoiceRequired
-11. ColorPickRequired
+1. InitialStateSync
+2. PlayerConnected
+3. CardsUpdate
+4. StackTopUpdate
+5. CardCountUpdate
+6. DirectionUpdate
+7. PlayerTurnUpdate
+8. StackColorUpdate
+9. CardValidity
+10. PlayerOut
+11. PlayerSkipped
+12. GameEnded
+13. CardSubmissionRequired
+14. ColorChoiceRequired
 
+## State Initialize Events
+
+### InitialStateSync
+to player that just connected, one-time client-side state sync for that player.
+```
+InitialStateSync {
+	players: ClientSidePlayer[], // players that are already in lobby.
+}
+```
+
+### PlayerConnected
+```
+PlayerConnected {
+	playerIndex: number,
+	playerName: string,
+	cardCount: number
+}
+```
 ## State Update Events
 ### CardsUpdate
 no need for player index, since it will only be sent to let player know their "own" cards.
@@ -84,16 +105,22 @@ PlayerSkipped {
 }
 ```
 
+### GameEnded
+```
+GameEnded {}
+```
+
+
 ## Request Input Events
 ### CardSubmissionRequired
-also provides deckPenalty to tell the client how many cards he will get from the deck in case they don't want to submit a card.
+also provides deckPenalty to tell the client how many cards they will get from the deck in case they don't want to submit a card.
 ```
 CardSubmissionRequired {
 	deckPenalty: number
 }
 ```
 
-### ColorPickRequired
+### ColorChoiceRequired
 ```
-ColorPickRequired {}
+ColorChoiceRequired {}
 ```
