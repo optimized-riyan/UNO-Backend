@@ -1,5 +1,7 @@
 import randomstring from 'randomstring';
-import { Player } from './player.js';
+import { LobbyState } from "../types.js";
+import { Card } from "./card.js";
+import { Player } from "./player.js";
 
 export class Lobby {
     public lobbyId: string;
@@ -9,7 +11,7 @@ export class Lobby {
     public lobbyState: LobbyState = LobbyState.WaitingForPlayers;
     public pickupCount: number = 0;
     public isReversed: boolean = false;
-    public isSkipNext: boolean = false;
+    public skipNext: boolean = false;
     public stack: Card[] = [];
     public stackTop?: Card;
     public deck: Card[];
@@ -40,51 +42,6 @@ export class Lobby {
 
     public checkIsCardValid(card: Card): boolean {
         return true; // TODO: implement card validation
-    }
-
-    public pushToStack(player: Player, cardIndex: number) {
-        switch ((player.cards[cardIndex] as Card).value) {
-            case (CardValue.PlusTwo):
-                this.pickupCount += 2;
-                break;
-            case (CardValue.PlusFour):
-                this.pickupCount += 4;
-                break;
-            case (CardValue.Reverse):
-                this.isReversed = !this.isReversed;
-                break;
-            case (CardValue.Skip):
-                this.isSkipNext = true;
-                break;
-            default:
-                throw Error('invalid card');
-        }
-    }
-
-    public chooseNextPlayer(): void {
-        const rememberCurrPlayer = this.currentPlayerIndex;
-        if (this.pickupCount > 0) {
-            const nextPlayerIndex = this.getNextPlayerIndex(this.currentPlayerIndex);
-            const nextPlayer = this.players[nextPlayerIndex] as Player;
-            if (!nextPlayer.checkPlayerHasCardWithValue(CardValue.PlusTwo) && !nextPlayer.checkPlayerHasCardWithValue(CardValue.PlusFour)) {
-                this.giveCards(this.pickupCount, nextPlayer);
-                this.pickupCount = 0;
-            }
-            this.currentPlayerIndex = this.getNextPlayerIndex(nextPlayerIndex);
-        } else if (this.isSkipNext) {
-            this.currentPlayerIndex = this.getNextPlayerIndex(this.getNextPlayerIndex(this.currentPlayerIndex));
-        }
-    }
-
-    private getNextPlayerIndex(currIndex: number): number {
-        let nextIndex = (currIndex + (this.isReversed ? -1 : 1) + this.maxPlayers) % this.maxPlayers;
-        let counter = 0;
-        while ((this.players[nextIndex] as Player).cards.length === 0 && counter < this.maxPlayers) {
-            nextIndex = (nextIndex + (this.isReversed ? -1 : 1) + this.maxPlayers) % this.maxPlayers;
-            counter++;
-        }
-        if (counter === this.maxPlayers) throw 'invalid server state';
-        return nextIndex;
     }
 
     private giveCards(count: number, player: Player): void {

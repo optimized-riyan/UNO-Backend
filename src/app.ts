@@ -1,9 +1,9 @@
 import express from 'express';
 import dotenv from 'dotenv';
-import { Lobby } from './models/lobby.js';
-import { Player } from './models/player.js';
 import { WebSocketServer } from 'ws';
 import websocketHandler from './websocket.js';
+import { Lobby } from './models/lobby.js';
+import { Player } from './models/player.js';
 
 dotenv.config();
 const app = express();

@@ -1,7 +1,7 @@
-import { Card, CardColor, CardValue } from "./card.js";
 import randomstring from 'randomstring';
-import { Lobby } from "./lobby.js";
-import { ServerMessage, ServerMessageType } from "../websocket.js";
+import { Lobby } from './lobby.js';
+import { ServerEvent, ServerEventType } from '../types.js';
+import { Card } from './card.js';
 
 export class Player {
     public cards: Card[] = [];
@@ -19,25 +19,13 @@ export class Player {
         return randomstring.generate();
     }
 
-    public checkPlayerHasCardWithColor(color: CardColor): boolean {
-        return this.cards.some(card => card.color === color);
-    }
-    
-    public checkPlayerHasCardWithValue(value: CardValue): boolean {
-        return this.cards.some(card => card.value === value);
-    }
-    
-    public checkPlayerHasCard(card: Card): boolean {
-        return this.cards.includes(card);
+    public sendServerEvent(serverEvent: ServerEvent): void {
+        this.socket?.send(JSON.stringify(serverEvent));
     }
 
-    public sendServerMessage(serverMessage: ServerMessage): void {
-        this.socket?.send(JSON.stringify(serverMessage));
-    }
-
-    public sendInvalidActionMessage(message?: string): void {
-        this.sendServerMessage({
-            type: ServerMessageType.InvalidAction,
+    public sendInvalidActionEvent(message?: string): void {
+        this.sendServerEvent({
+            type: ServerEventType.InvalidAction,
             data: message,
         });
     }

@@ -1,4 +1,6 @@
-class Card {
+import { CardColor, CardValue } from "../types.js";
+
+export class Card {
     public color: CardColor;
     public value: CardValue;
 
