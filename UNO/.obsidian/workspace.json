@@ -26,7 +26,7 @@
               "type": "markdown",
               "state": {
                 "file": "Server Events.md",
-                "mode": "source",
+                "mode": "preview",
                 "source": false
               },
               "icon": "lucide-file",
@@ -178,14 +178,14 @@
   },
   "active": "a148175adbe2cbf9",
   "lastOpenFiles": [
-    "Excalidraw/SubmitCard Subroutine.md",
-    "Excalidraw/Choose Next Player Subroutine.md",
-    "Excalidraw/PickColor Subroutine.md",
-    "Excalidraw/GameLoop.md",
     "Server Events.md",
+    "Excalidraw/Choose Next Player Subroutine.md",
+    "Excalidraw/SubmitCard Subroutine.md",
+    "Excalidraw/GameLoop.md",
+    "Excalidraw/ExcalidrawStartup.md",
+    "Excalidraw/PickColor Subroutine.md",
     "Excalidraw/HitDeck Subroutine.md",
     "Client Actions.md",
-    "Excalidraw/ExcalidrawStartup.md",
     "Excalidraw",
     "Excalidraw",
     "UNO/Untitled.md",

@@ -5,9 +5,10 @@
 5. PlayerTurnUpdate
 6. StackColorUpdate
 7. CardValidity
-8. PlayerWon
-9. CardChoiceRequired
-10. ColorPickRequired
+8. PlayerOut
+9. PlayerSkipped
+10. CardChoiceRequired
+11. ColorPickRequired
 
 ## State Update Events
 ### CardsUpdate
@@ -68,10 +69,17 @@ CardValidity {
 }
 ```
 
-### PlayerWon
+### PlayerOut
 notifies that a player won. better than checking for player wins on client side (or is it?).
 ```
-PlayerWon {
+PlayerOut {
+	playerIndex: number
+}
+```
+
+### PlayerSkipped
+```
+PlayerSkipped {
 	playerIndex: number
 }
 ```
