@@ -156,6 +156,7 @@ export class Lobby {
                         break;
                     case CardValue.PlusFour:
                         this.pickupCount += 4;
+                        player.sendServerEvent({type: ServerEventType.ColorChoiceRequired});
                         break;
                     case CardValue.Reverse:
                         this.isReversed = !this.isReversed;
@@ -187,7 +188,23 @@ export class Lobby {
     }
 
     private checkIsCardValid(card: Card): boolean {
-        return true; // TODO: implement card validation
+        if (this.pickupCount > 0) {
+            if ((this.stackTop as Card).value === CardValue.PlusTwo) {
+                return card.value === CardValue.PlusTwo || card.value === CardValue.PlusFour;
+            } else {
+                if ((this.stackTop as Card).value === CardValue.PlusFour) {
+                    return card.value === CardValue.PlusFour;
+                } else {
+                    throw 'impossible state';
+                }
+            }
+        } else {
+            if (card.color === this.stackColor as CardColor || card.color === CardColor.Black) {
+                return true;
+            } else {
+                return (this.stackTop as Card).value === card.value;
+            }
+        }
     }
 
     private giveCards(count: number, cardsRef: Card[]): void {
