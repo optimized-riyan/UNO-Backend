@@ -1,6 +1,6 @@
 import randomstring from 'randomstring';
 import { IncomingMessage } from 'http';
-import { CardColor, CardCountUpdate, CardsUpdate, CardValidity, CardValue, ClientAction, ClientActionData, ClientActionType, DirectionUpdate, LobbyState, PlayerConnected, PlayerOut, PlayerTurnUpdate, ServerEvent, ServerEventType, StackTopUpdate, SubmitCard } from "../types.js";
+import { CardColor, CardCountUpdate, CardsUpdate, CardValidity, CardValue, ClientAction, ClientActionData, ClientActionType, DirectionUpdate, LobbyState, PickColor, PlayerConnected, PlayerOut, PlayerTurnUpdate, ServerEvent, ServerEventType, StackColorUpdate, StackTopUpdate, SubmitCard } from "../types.js";
 import { Card } from "./card.js";
 import { Player } from "./player.js";
 
@@ -183,6 +183,40 @@ export class Lobby {
                         } as PlayerOut
                     });
                 }
+                break;
+            case ClientActionType.PickColor:
+                const {color} = clientAction.data as PickColor;
+                if (color === CardColor.Black) {
+                    player.sendServerEvent({type: ServerEventType.InvalidAction});
+                } else {
+                    this.stackColor = color;
+                    this.sendServerEventToAll({
+                        type: ServerEventType.StackColorUpdate,
+                        data: {
+                            color
+                        } as StackColorUpdate
+                    });
+                }
+                break;
+            case ClientActionType.HitDeck:
+                if (this.pickupCount > 0) {
+                    this.giveCards(this.pickupCount, player.cards);
+                    this.pickupCount = 0;
+                }
+                player.sendServerEvent({
+                    type: ServerEventType.CardsUpdate,
+                    data: {cards: player.cards} as CardsUpdate
+                });
+                this.sendServerEventComplementary(player, {
+                    type: ServerEventType.CardCountUpdate,
+                    data: {
+                        playerIndex: player.index as number,
+                        count: player.cards.length
+                    } as CardCountUpdate
+                });
+                break;
+            default:
+                console.warn(`unknown client action type: ${clientAction.type}`);
                 break;
         }
     }
