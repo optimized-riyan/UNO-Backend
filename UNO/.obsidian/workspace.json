@@ -20,15 +20,15 @@
             }
           },
           {
-            "id": "a327c3262253d1c1",
+            "id": "8709e75180031962",
             "type": "leaf",
             "state": {
               "type": "excalidraw",
               "state": {
-                "file": "Excalidraw/SubmitCard Subroutine.md"
+                "file": "Excalidraw/PickColor Subroutine.md"
               },
               "icon": "excalidraw-icon",
-              "title": "SubmitCard Subroutine"
+              "title": "PickColor Subroutine"
             }
           }
         ],
@@ -63,7 +63,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "colorchoi",
+                "query": "",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -176,11 +176,11 @@
       "obsidian-excalidraw-plugin:Create new drawing": false
     }
   },
-  "active": "a327c3262253d1c1",
+  "active": "8709e75180031962",
   "lastOpenFiles": [
-    "Server Events.md",
     "Excalidraw/GameLoop.md",
     "Excalidraw/SubmitCard Subroutine.md",
+    "Server Events.md",
     "Excalidraw/Player Connection.md",
     "Client State.md",
     "Client Actions.md",
