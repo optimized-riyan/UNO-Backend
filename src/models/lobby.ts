@@ -1,6 +1,6 @@
 import randomstring from 'randomstring';
 import { IncomingMessage } from 'http';
-import { CardColor, CardCountUpdate, CardsUpdate, CardValue, DirectionUpdate, LobbyState, PlayerConnected, PlayerTurnUpdate, ServerEvent, ServerEventType, StackTopUpdate } from "../types.js";
+import { CardColor, CardCountUpdate, CardsUpdate, CardValidity, CardValue, ClientAction, ClientActionData, ClientActionType, DirectionUpdate, LobbyState, PlayerConnected, PlayerOut, PlayerTurnUpdate, ServerEvent, ServerEventType, StackTopUpdate, SubmitCard } from "../types.js";
 import { Card } from "./card.js";
 import { Player } from "./player.js";
 
@@ -131,6 +131,59 @@ export class Lobby {
     }
 
     private gameLoop(message: MessageEvent, player: Player) {
+        const clientAction = message.data as ClientAction;
+        switch (clientAction.type) {
+            case ClientActionType.SubmitCard:
+                const {cardIndex} = clientAction.data as SubmitCard;
+                const card = player.cards[cardIndex] as Card;
+                const cardIsValid = this.checkIsCardValid(card);
+
+                player.sendServerEvent({
+                    type: ServerEventType.CardValidity,
+                    data: {
+                        isValid: cardIsValid
+                    } as CardValidity
+                });
+                if (!cardIsValid) break;
+
+                const removed = player.cards.splice(cardIndex, 1);
+                this.stack.push(removed[0] as Card);
+                this.stackTop = this.stack[this.stack.length - 1] as Card;
+                this.stackColor = this.stackTop.color;
+                switch (card.value) {
+                    case CardValue.PlusTwo:
+                        this.pickupCount += 2;
+                        break;
+                    case CardValue.PlusFour:
+                        this.pickupCount += 4;
+                        break;
+                    case CardValue.Reverse:
+                        this.isReversed = !this.isReversed;
+                        this.sendServerEventToAll({
+                            type: ServerEventType.DirectionUpdate,
+                            data: {isReversed: this.isReversed} as DirectionUpdate
+                        });
+                        break;
+                    case CardValue.Skip:
+                        this.skipNext = true;
+                        break;
+                    case CardValue.ColorChange:
+                        player.sendServerEvent({type: ServerEventType.ColorChoiceRequired});
+                        break;
+                    default:
+                        break;
+                }
+                if (player.cards.length === 0) {
+                    this.activePlayers--;
+                    this.sendServerEventToAll({
+                        type: ServerEventType.PlayerOut,
+                        data: {
+                            playerIndex: player.index
+                        } as PlayerOut
+                    });
+                }
+                break;
+        }
     }
 
     private checkIsCardValid(card: Card): boolean {
