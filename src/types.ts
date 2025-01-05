@@ -35,7 +35,7 @@ export enum CardValue {
 
 export interface ClientAction {
     type: ClientActionType,
-    data: ClientActionData,
+    data?: ClientActionData,
 }
 
 export enum ClientActionType {
@@ -44,7 +44,7 @@ export enum ClientActionType {
     HitDeck,
 }
 
-export type ClientActionData = undefined | PickColor | SubmitCard;
+export type ClientActionData = PickColor | SubmitCard;
 
 export interface PickColor {
     color: CardColor,
@@ -56,7 +56,7 @@ export interface SubmitCard {
 
 export interface ServerEvent {
     type: ServerEventType,
-    data: ServerEventData,
+    data?: ServerEventData,
 }
 
 export enum ServerEventType {
@@ -78,7 +78,7 @@ export enum ServerEventType {
     ColorChoiceRequired,
 }
 
-export type ServerEventData = InvalidAction | StateInitializeEvent | StateUpdateEvent | InfoEvent | InputRequiredEvent | undefined;
+export type ServerEventData = InvalidAction | StateInitializeEvent | StateUpdateEvent | InfoEvent | InputRequiredEvent;
 export type StateInitializeEvent = InitialStateSync | PlayerConnected;
 export type StateUpdateEvent = CardsUpdate | StackTopUpdate | CardCountUpdate | DirectionUpdate | PlayerTurnUpdate | StackColorUpdate;
 export type InfoEvent = CardValidity | PlayerOut | PlayerSkipped;

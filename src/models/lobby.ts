@@ -1,6 +1,6 @@
 import randomstring from 'randomstring';
 import { IncomingMessage } from 'http';
-import { CardColor, CardCountUpdate, CardsUpdate, CardValue, DirectionUpdate, LobbyState, PlayerConnected, ServerEvent, ServerEventType } from "../types.js";
+import { CardColor, CardCountUpdate, CardsUpdate, CardValue, DirectionUpdate, LobbyState, PlayerConnected, PlayerTurnUpdate, ServerEvent, ServerEventType, StackTopUpdate } from "../types.js";
 import { Card } from "./card.js";
 import { Player } from "./player.js";
 
@@ -112,6 +112,22 @@ export class Lobby {
         }
         this.stackTop = this.stack[this.stack.length - 1];
         this.stackColor = this.stackTop?.color;
+        this.sendServerEventToAll({
+            type: ServerEventType.GameStarted,
+        });
+        this.sendServerEventToAll({
+            type: ServerEventType.StackTopUpdate,
+            data: {
+                card: this.stackTop,
+            } as StackTopUpdate
+        });
+        this.sendServerEventToAll({
+            type: ServerEventType.PlayerTurnUpdate,
+            data: {
+                currentPlayerIndex: 0,
+            } as PlayerTurnUpdate
+        });
+        this.lobbyState = LobbyState.Running;
     }
 
     private gameLoop(message: MessageEvent, player: Player) {
@@ -133,6 +149,12 @@ export class Lobby {
     private sendServerEventComplementary(player: Player, serverEvent: ServerEvent): void {
         this.players.forEach(p => {
             if (p !== player) p.sendServerEvent(serverEvent);
+        });
+    }
+
+    private sendServerEventToAll(serverEvent: ServerEvent): void {
+        this.players.forEach(p => {
+            p.sendServerEvent(serverEvent);
         });
     }
 }
