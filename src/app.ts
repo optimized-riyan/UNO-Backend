@@ -3,13 +3,15 @@ import dotenv from 'dotenv';
 import { WebSocketServer } from 'ws';
 import { Lobby } from './models/lobby.js';
 import { Player } from './models/player.js';
+import cors from 'cors';
 
 dotenv.config();
 const app = express();
 
 app.use(express.json());
+app.use(cors());
 
-app.post('/host', (req, res) => {
+app.post('/api/host', (req, res) => {
     const {hostname, playerCount} = req.body;
     if (!hostname || !playerCount) {
         res.status(422).end(`
@@ -25,7 +27,7 @@ app.post('/host', (req, res) => {
     }
 });
 
-app.post('/join', (req, res) => {
+app.post('/api/join', (req, res) => {
     const {lobbyId, name} = req.body;
     if (!lobbyId || !name) {
         res.status(422).end(`
