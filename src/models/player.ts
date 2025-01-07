@@ -1,6 +1,6 @@
 import randomstring from 'randomstring';
 import { Lobby } from './lobby.js';
-import { ServerEvent, ServerEventType } from '../types.js';
+import { ClientSidePlayer, ServerEvent, ServerEventType } from '../types.js';
 import { Card } from './card.js';
 
 export class Player {

@@ -9,7 +9,10 @@ dotenv.config();
 const app = express();
 
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+    origin: process.env.CLIENT_ORIGIN,
+    credentials: true
+}));
 
 app.post('/api/host', (req, res) => {
     const {hostname, playerCount} = req.body;
@@ -22,8 +25,12 @@ app.post('/api/host', (req, res) => {
             }
         `);
     } else {
-        const lobbyId = Lobby.createLobby();
-        res.status(200).json({lobbyId});
+        const lobby = Lobby.createLobby();
+        const player = new Player(lobby, hostname);
+        lobby.addPlayer(player);
+        res.status(200).cookie('playerId', player.playerId, {
+            sameSite: 'lax'
+        }).json({lobbyId: lobby.lobbyId}).end();
     }
 });
 

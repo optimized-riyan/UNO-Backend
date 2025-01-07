@@ -1,5 +1,6 @@
 import randomstring from 'randomstring';
 import { IncomingMessage } from 'http';
+import cookie from 'cookie';
 import { CardColor, CardCountUpdate, CardsUpdate, CardValidity, CardValue, ClientAction, ClientActionData, ClientActionType, DirectionUpdate, LobbyState, PickColor, PlayerConnected, PlayerOut, PlayerTurnUpdate, ServerEvent, ServerEventType, StackColorUpdate, StackTopUpdate, SubmitCard } from "../types.js";
 import { Card } from "./card.js";
 import { Player } from "./player.js";
@@ -28,16 +29,17 @@ export class Lobby {
         this.deck = Card.deckFactory(deckCount);
     }
 
-    public static createLobby(): string {
+    public static createLobby(): Lobby {
         const lobby = new Lobby(Lobby.roomIdGen(), []);
         Lobby.lobbies.set(lobby.lobbyId, lobby);
-        return lobby.lobbyId;
+        return lobby;
     }
 
     private static roomIdGen = (): string => randomstring.generate({length: 6, charset: ['numeric']});
 
     public static playerConnectionHandler(socket: WebSocket, req: IncomingMessage): void {
-        const playerId: string | undefined = (new URLSearchParams(req.headers.cookie ?? '') as any).playerId;
+        const playerId: string | undefined = (cookie.parse(req.headers.cookie!) as any).playerId;
+        console.log(req.headers);
         if (!playerId) {
             socket.close();
             return;
@@ -59,6 +61,7 @@ export class Lobby {
 
     public addPlayer(player: Player): void {
         this.players.push(player);
+        Player.players.set(player.playerId, player);
         player.index = this.players.length - 1;
     }
 
