@@ -1,7 +1,7 @@
 import randomstring from 'randomstring';
 import { IncomingMessage } from 'http';
 import cookie from 'cookie';
-import { CardColor, CardCountUpdate, CardsUpdate, CardValidity, CardValue, ClientAction, ClientActionType, CSPlayersSync, DirectionUpdate, LobbyState, PickColor, PlayerIndexSync, PlayerOut, PlayerTurnUpdate, ServerEvent, ServerEventType, StackColorUpdate, StackTopUpdate, SubmitCard } from "../types.js";
+import { CardColor, CardCountUpdate, CardsUpdate, CardValidity, CardValue, ClientAction, ClientActionType, ClientSidePlayer, CSPlayersSync, DirectionUpdate, LobbyState, PickColor, PlayerIndexSync, PlayerOut, PlayerTurnUpdate, ServerEvent, ServerEventType, StackColorUpdate, StackTopUpdate, SubmitCard } from "../types.js";
 import { Card } from "./card.js";
 import { Player } from "./player.js";
 
@@ -67,12 +67,20 @@ export class Lobby {
 
     private onPlayerConnected(player: Player): void {
         this.giveCards(10, player.cards);
-        player.sendServerEvent({
-            type: ServerEventType.PlayerIndexSync,
-            data: {
-                playerIndex: player.index!
-            } as PlayerIndexSync
-        });
+        player.sendServerEvents([
+            {
+                type: ServerEventType.PlayerIndexSync,
+                data: {
+                    playerIndex: player.index!
+                } as PlayerIndexSync
+            },
+            {
+                type: ServerEventType.CardsUpdate,
+                data: {
+                    cards: player.cards
+                } as CardsUpdate
+            }
+        ]);
         if (++this.activePlayers === this.maxPlayers) this.beginGame();
     }
 
@@ -92,9 +100,7 @@ export class Lobby {
             {
                 type: ServerEventType.CSPlayersSync,
                 data: {
-                    players: this.players.map(player => {
-                        return {name: player.name, cardCount: player.cards.length}
-                    }),
+                    players: this.players.map(player => player.toClientSidePlayer()),
                 } as CSPlayersSync
             },
             {
@@ -111,6 +117,12 @@ export class Lobby {
                 data: {
                     currentPlayerIndex: 0
                 } as PlayerTurnUpdate
+            },
+            {
+                type: ServerEventType.DirectionUpdate,
+                data: {
+                    isReversed: this.isReversed
+                } as DirectionUpdate
             }
         ]);
         this.lobbyState = LobbyState.Running;

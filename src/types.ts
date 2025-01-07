@@ -89,6 +89,7 @@ export type InvalidAction = string;
 export interface ClientSidePlayer {
     name: string,
     cardCount: number,
+    index: number
 }
 
 export interface PlayerIndexSync {

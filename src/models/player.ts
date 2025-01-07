@@ -26,10 +26,15 @@ export class Player {
         this.socket?.send(JSON.stringify(serverEvent));
     }
 
+    public sendServerEvents(serverEvents: ServerEvent[]): void {
+        serverEvents.forEach(ev => this.sendServerEvent(ev));
+    }
+
     public toClientSidePlayer(): ClientSidePlayer {
         return {
             name: this.name,
-            cardCount: this.cards.length
+            cardCount: this.cards.length,
+            index: this.index!
         };
     }
 }
