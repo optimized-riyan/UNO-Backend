@@ -67,6 +67,12 @@ export class Lobby {
 
     private onPlayerConnected(player: Player): void {
         this.giveCards(10, player.cards);
+        player.sendServerEvent({
+            type: ServerEventType.PlayerIndexSync,
+            data: {
+                playerIndex: player.index!
+            } as PlayerIndexSync
+        });
         if (++this.activePlayers === this.maxPlayers) this.beginGame();
     }
 
@@ -82,14 +88,6 @@ export class Lobby {
         }
         this.stackTop = this.stack[this.stack.length - 1]!;
         this.stackColor = this.stackTop.color;
-        this.players.forEach(player => {
-            player.sendServerEvent({
-                type: ServerEventType.PlayerIndexSync,
-                data: {
-                    playerIndex: player.index!
-                } as PlayerIndexSync
-            })
-        });
         this.sendServerEventsToAll([
             {
                 type: ServerEventType.CSPlayersSync,
