@@ -1,22 +1,22 @@
-1. InitialStateSync
-2. PlayerConnected
-3. CardsUpdate
-4. StackTopUpdate
-5. CardCountUpdate
-6. DirectionUpdate
-7. PlayerTurnUpdate
-8. StackColorUpdate
-9. CardValidity
-10. PlayerOut
-11. PlayerSkipped
-12. GameStarted
-13. GameEnded
-14. CardSubmissionRequired
-15. ColorChoiceRequired
+- CSPlayersSync
+- PlayerIndexSync
+- CardsUpdate
+- StackTopUpdate
+- CardCountUpdate
+- DirectionUpdate
+- PlayerTurnUpdate
+- StackColorUpdate
+- CardValidity
+- PlayerOut
+- PlayerSkipped
+- GameStarted
+- GameEnded
+- CardSubmissionRequired
+- ColorChoiceRequired
 
 ## State Initialize Events
 
-### InitialStateSync
+### CSPlayersSync
 to player that just connected, one-time client-side state sync for that player.
 ```
 InitialStateSync {
@@ -24,14 +24,13 @@ InitialStateSync {
 }
 ```
 
-### PlayerConnected
+### PlayerIndexSync
 ```
-PlayerConnected {
-	playerIndex: number,
-	playerName: string,
-	cardCount: number
+PlayerIndexSync {
+	playerIndex: number
 }
 ```
+
 ## State Update Events
 ### CardsUpdate
 no need for player index, since it will only be sent to let player know their "own" cards.

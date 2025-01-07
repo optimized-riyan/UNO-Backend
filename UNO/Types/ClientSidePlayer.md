@@ -1,6 +1,6 @@
 ```
 interface {
 	name: string
-	cardCount: number,
+	cardCount: number
 }
 ```

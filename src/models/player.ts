@@ -32,4 +32,11 @@ export class Player {
             data: message,
         });
     }
+
+    public toClientSidePlayer(): ClientSidePlayer {
+        return {
+            name: this.name,
+            cardCount: this.cards.length
+        };
+    }
 }

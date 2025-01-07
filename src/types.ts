@@ -92,9 +92,7 @@ export interface InitialStateSync {
 
 export interface ClientSidePlayer {
     name: string,
-    cardCount?: number,
-    cards?: Card[],
-    isMe: boolean
+    cardCount: number,
 }
 
 export interface PlayerConnected {
