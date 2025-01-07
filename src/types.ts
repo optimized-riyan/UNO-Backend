@@ -61,8 +61,8 @@ export interface ServerEvent {
 
 export enum ServerEventType {
     InvalidAction,
-    InitialStateSync,
-    PlayerConnected,
+    PlayerIndexSync,
+    CSPlayersSync,
     CardsUpdate,
     StackTopUpdate,
     CardCountUpdate,
@@ -79,26 +79,24 @@ export enum ServerEventType {
 }
 
 export type ServerEventData = InvalidAction | StateInitializeEvent | StateUpdateEvent | InfoEvent | InputRequiredEvent;
-export type StateInitializeEvent = InitialStateSync | PlayerConnected;
+export type StateInitializeEvent = PlayerIndexSync | CSPlayersSync;
 export type StateUpdateEvent = CardsUpdate | StackTopUpdate | CardCountUpdate | DirectionUpdate | PlayerTurnUpdate | StackColorUpdate;
 export type InfoEvent = CardValidity | PlayerOut | PlayerSkipped;
 export type InputRequiredEvent = CardSubmissionRequired;
 
 export type InvalidAction = string;
 
-export interface InitialStateSync {
-    players: ClientSidePlayer[],
-}
-
 export interface ClientSidePlayer {
     name: string,
     cardCount: number,
 }
 
-export interface PlayerConnected {
-    playerIndex: number,
-	playerName: string,
-	cardCount: number
+export interface PlayerIndexSync {
+    playerIndex: number
+}
+
+export interface CSPlayersSync {
+    players: ClientSidePlayer[]
 }
 
 export interface CardsUpdate {

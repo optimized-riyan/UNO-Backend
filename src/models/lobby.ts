@@ -1,7 +1,7 @@
 import randomstring from 'randomstring';
 import { IncomingMessage } from 'http';
 import cookie from 'cookie';
-import { CardColor, CardCountUpdate, CardsUpdate, CardValidity, CardValue, ClientAction, ClientActionData, ClientActionType, DirectionUpdate, LobbyState, PickColor, PlayerConnected, PlayerOut, PlayerTurnUpdate, ServerEvent, ServerEventType, StackColorUpdate, StackTopUpdate, SubmitCard } from "../types.js";
+import { CardColor, CardCountUpdate, CardsUpdate, CardValidity, CardValue, ClientAction, ClientActionType, CSPlayersSync, DirectionUpdate, LobbyState, PickColor, PlayerIndexSync, PlayerOut, PlayerTurnUpdate, ServerEvent, ServerEventType, StackColorUpdate, StackTopUpdate, SubmitCard } from "../types.js";
 import { Card } from "./card.js";
 import { Player } from "./player.js";
 
@@ -67,39 +67,6 @@ export class Lobby {
 
     private onPlayerConnected(player: Player): void {
         this.giveCards(10, player.cards);
-        this.sendServerEventComplementary(player, {
-            type: ServerEventType.PlayerConnected,
-            data: {
-                playerIndex: player.index,
-                playerName: player.name,
-                cardCount: player.cards.length,
-            } as PlayerConnected
-        });
-
-        player.sendServerEvent({
-            type: ServerEventType.CardsUpdate,
-            data: {
-                cards: player.cards,
-            } as CardsUpdate
-        });
-        player.sendServerEvent({
-            type: ServerEventType.DirectionUpdate,
-            data: {
-                isReversed: false,
-            } as DirectionUpdate
-        });
-        this.players.forEach(p => {
-            if (p !== player) {
-                player.sendServerEvent({
-                    type: ServerEventType.CardCountUpdate,
-                    data: {
-                        playerIndex: p.index,
-                        count: p.cards.length,
-                    } as CardCountUpdate
-                });
-            }
-        });
-
         if (++this.activePlayers === this.maxPlayers) this.beginGame();
     }
 
@@ -113,23 +80,41 @@ export class Lobby {
         ) {
             this.giveCards(1, this.stack);
         }
-        this.stackTop = this.stack[this.stack.length - 1];
-        this.stackColor = this.stackTop?.color;
-        this.sendServerEventToAll({
-            type: ServerEventType.GameStarted,
+        this.stackTop = this.stack[this.stack.length - 1]!;
+        this.stackColor = this.stackTop.color;
+        this.players.forEach(player => {
+            player.sendServerEvent({
+                type: ServerEventType.PlayerIndexSync,
+                data: {
+                    playerIndex: player.index!
+                } as PlayerIndexSync
+            })
         });
-        this.sendServerEventToAll({
-            type: ServerEventType.StackTopUpdate,
-            data: {
-                card: this.stackTop,
-            } as StackTopUpdate
-        });
-        this.sendServerEventToAll({
-            type: ServerEventType.PlayerTurnUpdate,
-            data: {
-                currentPlayerIndex: 0,
-            } as PlayerTurnUpdate
-        });
+        this.sendServerEventsToAll([
+            {
+                type: ServerEventType.CSPlayersSync,
+                data: {
+                    players: this.players.map(player => {
+                        return {name: player.name, cardCount: player.cards.length}
+                    }),
+                } as CSPlayersSync
+            },
+            {
+                type: ServerEventType.GameStarted,
+            },
+            {
+                type: ServerEventType.StackTopUpdate,
+                data: {
+                    card: this.stackTop
+                } as StackTopUpdate
+            },
+            {
+                type: ServerEventType.PlayerTurnUpdate,
+                data: {
+                    currentPlayerIndex: 0
+                } as PlayerTurnUpdate
+            }
+        ]);
         this.lobbyState = LobbyState.Running;
     }
 
@@ -263,5 +248,9 @@ export class Lobby {
         this.players.forEach(p => {
             p.sendServerEvent(serverEvent);
         });
+    }
+
+    private sendServerEventsToAll(serverEvents: ServerEvent[]): void {
+        serverEvents.forEach(ev => this.sendServerEventToAll(ev));
     }
 }
