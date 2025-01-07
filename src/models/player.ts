@@ -26,13 +26,6 @@ export class Player {
         this.socket?.send(JSON.stringify(serverEvent));
     }
 
-    public sendInvalidActionEvent(message?: string): void {
-        this.sendServerEvent({
-            type: ServerEventType.InvalidAction,
-            data: message,
-        });
-    }
-
     public toClientSidePlayer(): ClientSidePlayer {
         return {
             name: this.name,
