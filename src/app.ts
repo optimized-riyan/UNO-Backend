@@ -55,7 +55,7 @@ app.post('/api/join', (req, res) => {
     } else {
         const player = new Player(lobby, name);
         lobby.addPlayer(player);
-        res.cookie('playerId', player.playerId).status(204).end();
+        res.cookie('playerId', player.playerId).status(200).json({lobbyId, lobbyCapacity: lobby.maxPlayers}).end();
     }
 });
 

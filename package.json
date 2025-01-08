@@ -1,7 +1,7 @@
 {
     "type": "module",
     "scripts": {
-        "start": "nodemon app.js"
+        "start": "nodemon dist/app.js"
     },
     "dependencies": {
         "cookie": "^1.0.2",
