@@ -1,7 +1,7 @@
 import randomstring from 'randomstring';
 import { IncomingMessage } from 'http';
 import cookie from 'cookie';
-import { CardColor, CardCountUpdate, CardsUpdate, CardValidity, CardValue, ClientAction, ClientActionType, ClientSidePlayer, CSPlayersSync, DirectionUpdate, LobbyState, PickColor, PlayerConnectionState, PlayerIndexSync, PlayerOut, PlayerTurnUpdate, ServerEvent, ServerEventType, StackColorUpdate, StackTopUpdate, SubmitCard } from "../types.js";
+import { CardColor, CardCountUpdate, CardsUpdate, CardValidity, CardValue, ClientAction, ClientActionType, ClientSidePlayer, CSPlayersSync, DirectionUpdate, InvalidAction, LobbyState, PickColor, PlayerConnectionState, PlayerIndexSync, PlayerOut, PlayerTurnUpdate, ServerEvent, ServerEventType, StackColorUpdate, StackTopUpdate, SubmitCard } from "../types.js";
 import { Card } from "./card.js";
 import { Player } from "./player.js";
 
@@ -54,7 +54,7 @@ export class Lobby {
         lobby.onPlayerConnected(player);
     
         socket.onmessage = (message: MessageEvent): void => {
-            lobby.gameLoop(message, player);
+            lobby.gameLoop(message.data as ClientAction, player);
         };
 
         socket.onclose = () => lobby.onPlayerDisconnected(player);
@@ -139,8 +139,14 @@ export class Lobby {
         this.lobbyState = LobbyState.Running;
     }
 
-    private gameLoop(message: MessageEvent, player: Player) {
-        const clientAction = message.data as ClientAction;
+    private gameLoop(clientAction: ClientAction, player: Player) {
+        if (this.lobbyState !== LobbyState.Running || player.index! !== this.currentPlayerIndex) {
+            player.sendServerEvent({
+                type: ServerEventType.InvalidAction,
+                data: this.lobbyState !== LobbyState.Running ? 'Game hasn\'t started yet!' : 'It isn\'t your turn yet!'
+            })
+        }
+
         switch (clientAction.type) {
             case ClientActionType.SubmitCard:
                 const {cardIndex} = clientAction.data as SubmitCard;
