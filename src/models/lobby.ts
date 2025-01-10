@@ -54,7 +54,7 @@ export class Lobby {
         lobby.onPlayerConnected(player);
     
         socket.onmessage = (message: MessageEvent): void => {
-            lobby.gameLoop(message.data as ClientAction, player);
+            lobby.gameLoop(JSON.parse(message.data) as ClientAction, player);
         };
 
         socket.onclose = () => lobby.onPlayerDisconnected(player);
@@ -144,7 +144,8 @@ export class Lobby {
             player.sendServerEvent({
                 type: ServerEventType.InvalidAction,
                 data: this.lobbyState !== LobbyState.Running ? 'Game hasn\'t started yet!' : 'It isn\'t your turn yet!'
-            })
+            });
+            return;
         }
 
         switch (clientAction.type) {
