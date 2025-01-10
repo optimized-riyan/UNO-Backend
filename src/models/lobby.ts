@@ -1,7 +1,7 @@
 import randomstring from 'randomstring';
 import { IncomingMessage } from 'http';
 import cookie from 'cookie';
-import { CardColor, CardCountUpdate, CardsUpdate, CardValidity, CardValue, ClientAction, ClientActionType, ClientSidePlayer, CSPlayersSync, DirectionUpdate, LobbyState, PickColor, PlayerIndexSync, PlayerOut, PlayerTurnUpdate, ServerEvent, ServerEventType, StackColorUpdate, StackTopUpdate, SubmitCard } from "../types.js";
+import { CardColor, CardCountUpdate, CardsUpdate, CardValidity, CardValue, ClientAction, ClientActionType, ClientSidePlayer, CSPlayersSync, DirectionUpdate, LobbyState, PickColor, PlayerConnectionState, PlayerIndexSync, PlayerOut, PlayerTurnUpdate, ServerEvent, ServerEventType, StackColorUpdate, StackTopUpdate, SubmitCard } from "../types.js";
 import { Card } from "./card.js";
 import { Player } from "./player.js";
 
@@ -39,7 +39,6 @@ export class Lobby {
 
     public static playerConnectionHandler(socket: WebSocket, req: IncomingMessage): void {
         const playerId: string | undefined = (cookie.parse(req.headers.cookie!) as any).playerId;
-        console.log(req.headers);
         if (!playerId) {
             socket.close();
             return;
@@ -57,6 +56,8 @@ export class Lobby {
         socket.onmessage = (message: MessageEvent): void => {
             lobby.gameLoop(message, player);
         };
+
+        socket.onclose = () => lobby.onPlayerDisconnected(player);
     }
 
     public addPlayer(player: Player): void {
@@ -66,7 +67,13 @@ export class Lobby {
     }
 
     private onPlayerConnected(player: Player): void {
-        this.giveCards(10, player.cards);
+        if (player.connectionState === PlayerConnectionState.NotYetConnected) {
+            player.connectionState = PlayerConnectionState.Connected;
+            this.giveCards(10, player.cards);
+            this.activePlayers++;
+        } else if (player.connectionState === PlayerConnectionState.Disconnected) {
+            player.connectionState = PlayerConnectionState.Connected;
+        }
         player.sendServerEvents([
             {
                 type: ServerEventType.PlayerIndexSync,
@@ -81,7 +88,11 @@ export class Lobby {
                 } as CardsUpdate
             }
         ]);
-        if (++this.activePlayers === this.maxPlayers) this.beginGame();
+        if (this.activePlayers === this.maxPlayers && this.lobbyState === LobbyState.WaitingForPlayers) this.beginGame();
+    }
+
+    private onPlayerDisconnected(player: Player): void {
+        player.connectionState = PlayerConnectionState.Disconnected;
     }
 
     private beginGame(): void {

@@ -1,6 +1,6 @@
 import randomstring from 'randomstring';
 import { Lobby } from './lobby.js';
-import { ClientSidePlayer, ServerEvent, ServerEventType } from '../types.js';
+import { ClientSidePlayer, PlayerConnectionState, ServerEvent } from '../types.js';
 import { Card } from './card.js';
 
 export class Player {
@@ -10,6 +10,7 @@ export class Player {
     public name: string;
     public lobby: Lobby;
     public socket?: WebSocket;
+    public connectionState = PlayerConnectionState.NotYetConnected;
     public static players: Map<string, Player> = new Map;
 
     constructor(lobby: Lobby, name: string) {

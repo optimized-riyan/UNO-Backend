@@ -85,8 +85,7 @@
               "title": "Bookmarks"
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "horizontal",
@@ -179,6 +178,7 @@
   },
   "active": "48eac46a34b6b884",
   "lastOpenFiles": [
+    "Excalidraw/Player Disconnection.md",
     "Server Events.md",
     "Excalidraw/Player Connection.md",
     "Types/ClientSidePlayer.md",

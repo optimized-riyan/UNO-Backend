@@ -140,3 +140,9 @@ export interface PlayerSkipped {
 export interface CardSubmissionRequired {
 	deckPenalty: number
 }
+
+export enum PlayerConnectionState {
+    NotYetConnected,
+    Connected,
+    Disconnected
+}
