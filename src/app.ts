@@ -63,5 +63,5 @@ app.listen(process.env.PORT, function() {
     console.log(`Server started on http://localhost:${process.env.PORT}`);
 });
 
-const server = new WebSocketServer({port: parseInt(process.env.WSS_PORT ?? '5174')});
+const server = new WebSocketServer({port: parseInt(process.env.WSS_PORT!)});
 server.on('connection', Lobby.playerConnectionHandler);
