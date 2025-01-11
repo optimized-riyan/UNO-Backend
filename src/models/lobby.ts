@@ -1,7 +1,7 @@
 import randomstring from 'randomstring';
 import { IncomingMessage } from 'http';
 import cookie from 'cookie';
-import { CardColor, CardCountUpdate, CardsUpdate, CardValidity, CardValue, ClientAction, ClientActionType, ClientSidePlayer, CSPlayersSync, DirectionUpdate, InvalidAction, LobbyState, PickColor, PlayerConnectionState, PlayerIndexSync, PlayerOut, PlayerTurnUpdate, ServerEvent, ServerEventType, StackColorUpdate, StackTopUpdate, SubmitCard } from "../types.js";
+import { CardColor, CardCountUpdate, CardsUpdate, CardValidity, CardValue, ClientAction, ClientActionType, ClientSidePlayer, CSPlayersSync, DirectionUpdate, InvalidAction, LobbyState, PickColor, PlayerConnectionState, PlayerIndexSync, PlayerOut, PlayerSkipped, PlayerTurnUpdate, ServerEvent, ServerEventType, StackColorUpdate, StackTopUpdate, SubmitCard } from "../types.js";
 import { Card } from "./card.js";
 import { Player } from "./player.js";
 
@@ -19,6 +19,7 @@ export class Lobby {
     public stackTop?: Card;
     public stackColor?: CardColor;
     public deck: Card[];
+    private awaitingColorChoice: boolean = false;
 
     public static lobbies: Map<string, Lobby> = new Map;
 
@@ -188,6 +189,7 @@ export class Lobby {
                         break;
                     case CardValue.PlusFour:
                         this.pickupCount += 4;
+                        this.awaitingColorChoice = true;
                         player.sendServerEvent({type: ServerEventType.ColorChoiceRequired});
                         break;
                     case CardValue.Reverse:
@@ -201,6 +203,7 @@ export class Lobby {
                         this.skipNext = true;
                         break;
                     case CardValue.ColorChange:
+                        this.awaitingColorChoice = true;
                         player.sendServerEvent({type: ServerEventType.ColorChoiceRequired});
                         break;
                     default:
@@ -228,6 +231,7 @@ export class Lobby {
                             color
                         } as StackColorUpdate
                     });
+                    this.awaitingColorChoice = false;
                 }
                 break;
             case ClientActionType.HitDeck:
@@ -251,10 +255,70 @@ export class Lobby {
                 console.warn(`unknown client action type: ${clientAction.type}`);
                 break;
         }
+
+        this.chooseNextPlayer();
+    }
+
+    private chooseNextPlayer(): void {
+        if (this.awaitingColorChoice) return;
+        do {
+            this.currentPlayerIndex = this.getNextPlayerIndex(this.currentPlayerIndex);
+        } while (this.players[this.currentPlayerIndex]!.cards.length === 0);
+        
+        if (this.skipNext) {
+            this.sendServerEventToAll({
+                type: ServerEventType.PlayerSkipped,
+                data: {
+                    playerIndex: this.players[this.currentPlayerIndex]!.index
+                } as PlayerSkipped
+            });
+            this.skipNext = false;
+            this.chooseNextPlayer();
+            return;
+        }
+
+        const player = this.players[this.currentPlayerIndex]!;
+        if (this.checkPlayerHasValidCard(player)) {
+            this.giveCards(Math.min(this.pickupCount, 1), player.cards);
+            player.sendServerEvent({
+                type: ServerEventType.CardsUpdate,
+                data: {
+                    cards: player.cards
+                } as CardsUpdate
+            });
+            this.pickupCount = 0;
+            this.sendServerEventToAll({
+                type: ServerEventType.CardCountUpdate,
+                data: {
+                    playerIndex: player.index,
+                    count: player.cards.length
+                } as CardCountUpdate
+            });
+            this.chooseNextPlayer();
+            return;
+        }
+
+        this.sendServerEventToAll({
+            type: ServerEventType.PlayerTurnUpdate,
+            data: {
+                currentPlayerIndex: this.currentPlayerIndex
+            } as PlayerTurnUpdate
+        });
+    }
+
+    private getNextPlayerIndex(currIndex: number): number {
+        let nextIndex = (currIndex + (this.isReversed ? -1 : 1) + this.maxPlayers) % this.maxPlayers;
+        let counter = 0;
+        while ((this.players[nextIndex] as Player).cards.length === 0 && counter < this.maxPlayers) {
+            nextIndex = (nextIndex + (this.isReversed ? -1 : 1) + this.maxPlayers) % this.maxPlayers;
+            counter++;
+        }
+        if (counter === this.maxPlayers) throw 'invalid server state';
+        return nextIndex;
     }
 
     private checkPlayerHasValidCard(player: Player): boolean {
-        return true;
+        return player.cards.some(card => this.checkIsCardValid(card));
     }
 
     private checkIsCardValid(card: Card): boolean {

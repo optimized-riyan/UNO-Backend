@@ -56,7 +56,7 @@
             }
           }
         ],
-        "currentTab": 3
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -87,7 +87,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "clientsideplayer",
+                "query": "awaiting",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -108,7 +108,8 @@
               "title": "Bookmarks"
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "horizontal",
@@ -199,12 +200,12 @@
       "obsidian-excalidraw-plugin:Create new drawing": false
     }
   },
-  "active": "2498b402409d1c71",
+  "active": "8389c8e81c511497",
   "lastOpenFiles": [
     "Excalidraw/PickColor Subroutine.md",
+    "Excalidraw/SubmitCard Subroutine.md",
     "Excalidraw/Choose Next Player Subroutine.md",
     "Excalidraw/GameLoop.md",
-    "Excalidraw/SubmitCard Subroutine.md",
     "Excalidraw/Player Connection.md",
     "Excalidraw/Player Disconnection.md",
     "Server Events.md",
