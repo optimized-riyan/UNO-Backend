@@ -161,7 +161,7 @@ export class Lobby {
                         isValid: cardIsValid
                     } as CardValidity
                 });
-                if (!cardIsValid) break;
+                if (!cardIsValid) return;
 
                 const removed = player.cards.splice(cardIndex, 1);
                 this.stack.push(removed[0]!);
