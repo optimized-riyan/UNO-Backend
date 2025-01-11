@@ -261,10 +261,8 @@ export class Lobby {
 
     private chooseNextPlayer(): void {
         if (this.awaitingColorChoice) return;
-        do {
-            this.currentPlayerIndex = this.getNextPlayerIndex(this.currentPlayerIndex);
-        } while (this.players[this.currentPlayerIndex]!.cards.length === 0);
-        
+        this.currentPlayerIndex = this.getNextPlayerIndex(this.currentPlayerIndex);
+
         if (this.skipNext) {
             this.sendServerEventToAll({
                 type: ServerEventType.PlayerSkipped,
@@ -278,8 +276,8 @@ export class Lobby {
         }
 
         const player = this.players[this.currentPlayerIndex]!;
-        if (this.checkPlayerHasValidCard(player)) {
-            this.giveCards(Math.min(this.pickupCount, 1), player.cards);
+        if (!this.checkPlayerHasValidCard(player)) {
+            this.giveCards(Math.max(this.pickupCount, 1), player.cards);
             player.sendServerEvent({
                 type: ServerEventType.CardsUpdate,
                 data: {
