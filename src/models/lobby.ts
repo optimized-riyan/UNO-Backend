@@ -163,9 +163,25 @@ export class Lobby {
                 if (!cardIsValid) break;
 
                 const removed = player.cards.splice(cardIndex, 1);
-                this.stack.push(removed[0] as Card);
-                this.stackTop = this.stack[this.stack.length - 1] as Card;
+                this.stack.push(removed[0]!);
+                this.stackTop = this.stack[this.stack.length - 1]!;
                 this.stackColor = this.stackTop.color;
+
+                player.sendServerEvent({
+                    type: ServerEventType.CardsUpdate,
+                    data: {cards: player.cards} as CardsUpdate
+                });
+                this.sendServerEventsToAll([
+                    {
+                        type: ServerEventType.CardCountUpdate,
+                        data: {playerIndex: player.index, count: player.cards.length} as CardCountUpdate
+                    },
+                    {
+                        type: ServerEventType.StackTopUpdate,
+                        data: {card: this.stackTop} as StackTopUpdate
+                    }
+                ]);
+
                 switch (card.value) {
                     case CardValue.PlusTwo:
                         this.pickupCount += 2;
@@ -253,7 +269,7 @@ export class Lobby {
                 }
             }
         } else {
-            if (card.color === this.stackColor as CardColor || card.color === CardColor.Black) {
+            if (card.color === this.stackColor! || card.color === CardColor.Black) {
                 return true;
             } else {
                 return (this.stackTop as Card).value === card.value;
