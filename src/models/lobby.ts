@@ -236,6 +236,7 @@ export class Lobby {
                 break;
             case ClientActionType.HitDeck:
                 this.giveCards(Math.max(this.pickupCount, 1), player.cards);
+                this.pickupCount = 0;
                 player.sendServerEvent({
                     type: ServerEventType.CardsUpdate,
                     data: {cards: player.cards} as CardsUpdate
