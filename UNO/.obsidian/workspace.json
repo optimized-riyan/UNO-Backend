@@ -20,6 +20,18 @@
             }
           },
           {
+            "id": "b0124b38b59f0c8a",
+            "type": "leaf",
+            "state": {
+              "type": "excalidraw",
+              "state": {
+                "file": "Excalidraw/Lobby Management Subroutine.md"
+              },
+              "icon": "excalidraw-icon",
+              "title": "Lobby Management Subroutine"
+            }
+          },
+          {
             "id": "8389c8e81c511497",
             "type": "leaf",
             "state": {
@@ -200,12 +212,12 @@
       "obsidian-excalidraw-plugin:Create new drawing": false
     }
   },
-  "active": "8389c8e81c511497",
+  "active": "b0124b38b59f0c8a",
   "lastOpenFiles": [
+    "Excalidraw/GameLoop.md",
+    "Excalidraw/Choose Next Player Subroutine.md",
     "Excalidraw/PickColor Subroutine.md",
     "Excalidraw/SubmitCard Subroutine.md",
-    "Excalidraw/Choose Next Player Subroutine.md",
-    "Excalidraw/GameLoop.md",
     "Excalidraw/Player Connection.md",
     "Excalidraw/Player Disconnection.md",
     "Server Events.md",
