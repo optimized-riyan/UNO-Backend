@@ -322,14 +322,21 @@ export class Lobby {
     }
 
     private manageLobby(): void {
-        if (this.stack.length <= parseInt(process.env.STACK_LIMIT ?? '0')) return;
-    
-        const poppedCards: Card[] = [];
-        for (let i = 0; i < 30; i++) {
-            poppedCards.push(this.stack.shift()!);
+        const stackLimit = parseInt(process.env.STACK_LIMIT!);
+        if (this.stack.length > stackLimit) {
+            const poppedCards: Card[] = [];
+            for (let i = 0; i < stackLimit; i++) {
+                poppedCards.push(this.stack.shift()!);
+            }
+            Card.shuffle(poppedCards);
+            this.deck.unshift(...poppedCards);
         }
-        Card.shuffle(poppedCards);
-        this.deck.unshift(...poppedCards);
+
+        if (this.activePlayers > 1) return;
+        this.sendServerEventToAll({
+            type: ServerEventType.GameEnded,
+        });
+        this.lobbyState = LobbyState.Ended;
     }
 
 
