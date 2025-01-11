@@ -1,7 +1,7 @@
 import randomstring from 'randomstring';
 import { IncomingMessage } from 'http';
 import cookie from 'cookie';
-import { CardColor, CardCountUpdate, CardsUpdate, CardValidity, CardValue, ClientAction, ClientActionType, ClientSidePlayer, CSPlayersSync, DirectionUpdate, InvalidAction, LobbyState, PickColor, PlayerConnectionState, PlayerIndexSync, PlayerOut, PlayerSkipped, PlayerTurnUpdate, ServerEvent, ServerEventType, StackColorUpdate, StackTopUpdate, SubmitCard } from "../types.js";
+import { CardColor, CardCountUpdate, CardsUpdate, CardValidity, CardValue, ClientAction, ClientActionType, CSPlayersSync, DirectionUpdate, LobbyState, PickColor, PlayerConnectionState, PlayerIndexSync, PlayerOut, PlayerSkipped, PlayerTurnUpdate, ServerEvent, ServerEventType, StackColorUpdate, StackTopUpdate, SubmitCard } from "../types.js";
 import { Card } from "./card.js";
 import { Player } from "./player.js";
 
@@ -302,6 +302,8 @@ export class Lobby {
                 currentPlayerIndex: this.currentPlayerIndex
             } as PlayerTurnUpdate
         });
+
+        this.manageLobby();
     }
 
     private getNextPlayerIndex(currIndex: number): number {
@@ -318,6 +320,18 @@ export class Lobby {
     private checkPlayerHasValidCard(player: Player): boolean {
         return player.cards.some(card => this.checkIsCardValid(card));
     }
+
+    private manageLobby(): void {
+        if (this.stack.length <= parseInt(process.env.STACK_LIMIT ?? '0')) return;
+    
+        const poppedCards: Card[] = [];
+        for (let i = 0; i < 30; i++) {
+            poppedCards.push(this.stack.shift()!);
+        }
+        Card.shuffle(poppedCards);
+        this.deck.unshift(...poppedCards);
+    }
+
 
     private checkIsCardValid(card: Card): boolean {
         if (this.pickupCount > 0) {
