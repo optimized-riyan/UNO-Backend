@@ -235,15 +235,12 @@ export class Lobby {
                 }
                 break;
             case ClientActionType.HitDeck:
-                if (this.pickupCount > 0) {
-                    this.giveCards(this.pickupCount, player.cards);
-                    this.pickupCount = 0;
-                }
+                this.giveCards(Math.max(this.pickupCount, 1), player.cards);
                 player.sendServerEvent({
                     type: ServerEventType.CardsUpdate,
                     data: {cards: player.cards} as CardsUpdate
                 });
-                this.sendServerEventComplementary(player, {
+                this.sendServerEventToAll({
                     type: ServerEventType.CardCountUpdate,
                     data: {
                         playerIndex: player.index as number,
