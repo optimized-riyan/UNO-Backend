@@ -97,7 +97,7 @@ export class Card {
         return deck;
     }
 
-    private static shuffle<T>(array: T[]): void {
+    public static shuffle<T>(array: T[]): void {
         for (let i = 0; i < array.length; i++) {
             const swapIndex = randomInt(i, array.length);
             if (swapIndex === i || swapIndex === array.length) continue;

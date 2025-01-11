@@ -140,7 +140,7 @@ export class Lobby {
     }
 
     private gameLoop(message: MessageEvent, player: Player) {
-        const clientAction = message.data as ClientAction;
+        const clientAction = JSON.parse(message.data) as ClientAction;
         switch (clientAction.type) {
             case ClientActionType.SubmitCard:
                 const {cardIndex} = clientAction.data as SubmitCard;
@@ -228,6 +228,19 @@ export class Lobby {
                 console.warn(`unknown client action type: ${clientAction.type}`);
                 break;
         }
+
+        this.manageLobby();
+    }
+
+    private manageLobby(): void {
+        if (this.stack.length <= parseInt(process.env.STACK_LIMIT ?? '0')) return;
+
+        const poppedCards: Card[] = [];
+        for (let i = 0; i < 30; i++) {
+            poppedCards.push(this.stack.shift()!);
+        }
+        Card.shuffle(poppedCards);
+        this.deck.unshift(...poppedCards);
     }
 
     private checkIsCardValid(card: Card): boolean {
