@@ -237,6 +237,10 @@ export class Lobby {
         }
     }
 
+    private checkPlayerHasValidCard(player: Player): boolean {
+        return true;
+    }
+
     private checkIsCardValid(card: Card): boolean {
         if (this.pickupCount > 0) {
             if ((this.stackTop as Card).value === CardValue.PlusTwo) {

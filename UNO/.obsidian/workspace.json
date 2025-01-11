@@ -13,27 +13,50 @@
             "state": {
               "type": "excalidraw",
               "state": {
-                "file": "Excalidraw/Player Connection.md"
+                "file": "Excalidraw/GameLoop.md"
               },
               "icon": "excalidraw-icon",
-              "title": "Player Connection"
+              "title": "GameLoop"
             }
           },
           {
-            "id": "b98219414eb93f5b",
+            "id": "8389c8e81c511497",
             "type": "leaf",
             "state": {
-              "type": "markdown",
+              "type": "excalidraw",
               "state": {
-                "file": "Server Events.md",
-                "mode": "preview",
-                "source": false
+                "file": "Excalidraw/Choose Next Player Subroutine.md"
               },
-              "icon": "lucide-file",
-              "title": "Server Events"
+              "icon": "excalidraw-icon",
+              "title": "Choose Next Player Subroutine"
+            }
+          },
+          {
+            "id": "b12fd268a994fe72",
+            "type": "leaf",
+            "state": {
+              "type": "excalidraw",
+              "state": {
+                "file": "Excalidraw/PickColor Subroutine.md"
+              },
+              "icon": "excalidraw-icon",
+              "title": "PickColor Subroutine"
+            }
+          },
+          {
+            "id": "2498b402409d1c71",
+            "type": "leaf",
+            "state": {
+              "type": "excalidraw",
+              "state": {
+                "file": "Excalidraw/SubmitCard Subroutine.md"
+              },
+              "icon": "excalidraw-icon",
+              "title": "SubmitCard Subroutine"
             }
           }
-        ]
+        ],
+        "currentTab": 3
       }
     ],
     "direction": "vertical"
@@ -176,23 +199,23 @@
       "obsidian-excalidraw-plugin:Create new drawing": false
     }
   },
-  "active": "48eac46a34b6b884",
+  "active": "2498b402409d1c71",
   "lastOpenFiles": [
-    "Excalidraw/Player Disconnection.md",
-    "Server Events.md",
-    "Excalidraw/Player Connection.md",
-    "Types/ClientSidePlayer.md",
-    "Client State.md",
+    "Excalidraw/PickColor Subroutine.md",
+    "Excalidraw/Choose Next Player Subroutine.md",
     "Excalidraw/GameLoop.md",
     "Excalidraw/SubmitCard Subroutine.md",
+    "Excalidraw/Player Connection.md",
+    "Excalidraw/Player Disconnection.md",
+    "Server Events.md",
+    "Types/ClientSidePlayer.md",
+    "Client State.md",
     "Excalidraw/HitDeck Subroutine.md",
-    "Excalidraw/PickColor Subroutine.md",
     "Client Actions.md",
     "Excalidraw/Lobby Management Subroutine.md",
     "Types/Card.md",
     "Types/CardColor.md",
     "Types",
-    "Excalidraw/Choose Next Player Subroutine.md",
     "Excalidraw/ExcalidrawStartup.md",
     "Excalidraw",
     "Excalidraw",

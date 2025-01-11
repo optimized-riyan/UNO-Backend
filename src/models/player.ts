@@ -1,6 +1,6 @@
 import randomstring from 'randomstring';
 import { Lobby } from './lobby.js';
-import { ClientSidePlayer, PlayerConnectionState, ServerEvent } from '../types.js';
+import { CardColor, CardValue, ClientSidePlayer, PlayerConnectionState, ServerEvent } from '../types.js';
 import { Card } from './card.js';
 
 export class Player {
@@ -37,5 +37,17 @@ export class Player {
             cardCount: this.cards.length,
             index: this.index!
         };
+    }
+
+    public checkPlayerHasCardWithColor(color: CardColor): boolean {
+        return this.cards.some(card => card.color === color);
+    }
+    
+    public checkPlayerHasCardWithValue(value: CardValue): boolean {
+        return this.cards.some(card => card.value === value);
+    }
+    
+    public checkPlayerHasCard(card: Card): boolean {
+        return this.cards.includes(card);
     }
 }
