@@ -29,7 +29,7 @@ app.post('/api/host', (req, res) => {
         const player = new Player(lobby, hostname);
         lobby.addPlayer(player);
         res.status(200).cookie('playerId', player.playerId, {
-            sameSite: 'lax'
+            sameSite: 'none'
         }).json({lobbyId: lobby.lobbyId}).end();
     }
 });
