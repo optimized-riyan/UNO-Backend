@@ -25,11 +25,11 @@ app.post('/api/host', (req, res) => {
             }
         `);
     } else {
-        const lobby = Lobby.createLobby();
+        const lobby = Lobby.createLobby(playerCount);
         const player = new Player(lobby, hostname);
         lobby.addPlayer(player);
         res.status(200).cookie('playerId', player.playerId, {
-            sameSite: 'none'
+            sameSite: 'lax'
         }).json({lobbyId: lobby.lobbyId}).end();
     }
 });

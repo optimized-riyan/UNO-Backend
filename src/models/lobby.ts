@@ -23,15 +23,15 @@ export class Lobby {
 
     public static lobbies: Map<string, Lobby> = new Map;
 
-    constructor(lobbyId: string, players: Player[], maxPlayers: number = 2, deckCount: number = 2) {
+    constructor(lobbyId: string, players: Player[], maxPlayers: number, deckCount: number = 2) {
         this.lobbyId = lobbyId;
         this.players = players;
         this.maxPlayers = maxPlayers;
         this.deck = Card.deckFactory(deckCount);
     }
 
-    public static createLobby(): Lobby {
-        const lobby = new Lobby(Lobby.roomIdGen(), []);
+    public static createLobby(maxPlayers: number = 2): Lobby {
+        const lobby = new Lobby(Lobby.roomIdGen(), [], maxPlayers);
         Lobby.lobbies.set(lobby.lobbyId, lobby);
         return lobby;
     }
