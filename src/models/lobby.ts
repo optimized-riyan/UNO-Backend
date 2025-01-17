@@ -334,7 +334,7 @@ export class Lobby {
         this.sendServerEventToAll({
             type: ServerEventType.GameEnded,
         });
-        this.lobbyState = LobbyState.Ended;
+        this.dispose();
     }
 
 
@@ -365,6 +365,11 @@ export class Lobby {
         }
         const length = poppedCards.length;
         for (let i = 0; i < length; i++) cardsRef.push(poppedCards[i] as Card);
+    }
+
+    private dispose(): void {
+        this.players.forEach(player => player.dispose());
+        Lobby.lobbies.delete(this.lobbyId);
     }
 
     private sendServerEventComplementary(player: Player, serverEvent: ServerEvent): void {

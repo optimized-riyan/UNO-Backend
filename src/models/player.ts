@@ -50,4 +50,8 @@ export class Player {
     public checkPlayerHasCard(card: Card): boolean {
         return this.cards.includes(card);
     }
+
+    public dispose(): void {
+        Player.players.delete(this.playerId);
+    }
 }

@@ -3,8 +3,6 @@ import {Card} from './models/card.js';
 export enum LobbyState {
     WaitingForPlayers,
     Running,
-    Ended,
-    AllPlayersLeft
 }
 
 export enum CardColor {
