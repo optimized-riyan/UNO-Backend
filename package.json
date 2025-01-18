@@ -1,7 +1,7 @@
 {
     "type": "module",
     "scripts": {
-        "start": "nodemon dist/app.js",
+        "start": "npx tsc && nodemon dist/app.js",
         "build": "npx tsc && npx rollup -c"
     },
     "dependencies": {
